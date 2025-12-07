@@ -8,7 +8,7 @@ class InventoryUI:
         self.root.title("Smart Inventory System")
         self.root.geometry("1000x600")
         self.root.configure(bg="#f0f0f0")
-         self.var_id = tk.StringVar()
+        self.var_id = tk.StringVar()
         self.var_name = tk.StringVar()
         self.var_category = tk.StringVar()
         self.var_quantity = tk.StringVar()
