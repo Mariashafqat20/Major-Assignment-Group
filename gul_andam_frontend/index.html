@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gul Andam — Inventory UI (Day 3)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Smart Inventory — Gul Andam (Day 3)</h1>
+
+    <section id="add">
+      <h2>Add Product</h2>
+      <form id="addForm">
+        <input name="name" placeholder="Name" required />
+        <input name="category" placeholder="Category" required />
+        <input name="quantity" type="number" placeholder="Quantity" required />
+        <input name="price" type="number" step="0.01" placeholder="Price" required />
+        <button type="submit">Add</button>
+      </form>
+    </section>
+
+    <section id="list">
+      <h2>Products</h2>
+      <div id="products"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
