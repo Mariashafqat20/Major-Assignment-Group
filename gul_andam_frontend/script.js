@@ -1,3 +1,5 @@
+import { validateProduct, escapeHtml } from "./validation.js";
+
 const API = "http://127.0.0.1:5001";
 
 async function fetchProducts(){
@@ -33,53 +35,62 @@ function renderProducts(items){
   });
 }
 
-function escapeHtml(s){
-  return (s + "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-// Add product form
+// Add product form validation
 document.getElementById("addForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
-  const data = {
-    name: form.name.value.trim(),
-    category: form.category.value.trim(),
-    quantity: Number(form.quantity.value),
-    price: Number(form.price.value),
-  };
+
+  const name = form.name.value;
+  const category = form.category.value;
+  const quantity = Number(form.quantity.value);
+  const price = Number(form.price.value);
+
+  const error = validateProduct(name, category, quantity, price);
+  if (error) {
+    alert(error);
+    return;
+  }
+
+  const data = { name, category, quantity, price };
+
   const res = await fetch(API + "/add", {
     method: "POST",
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify(data)
   });
+
   if(res.ok){
     form.reset();
     fetchProducts();
     alert("Product added");
   } else {
-    const err = await res.json();
-    alert("Error: " + JSON.stringify(err));
+    alert("Failed to add product");
   }
 });
 
-// Delegation for edit/delete
 document.getElementById("products").addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if(!btn) return;
   const action = btn.dataset.action;
   const id = btn.dataset.id;
-  if(action === "delete"){
-    if(!confirm("Delete product?")) return;
-    const res = await fetch(API + "/delete/" + id, { method: "DELETE" });
-    if(res.ok) { fetchProducts(); alert("Deleted"); }
-    else alert("Delete failed");
-  } else if(action === "edit"){
+
+  if(action === "edit"){
     const name = prompt("New name?");
-    if(name === null) return;
     const category = prompt("New category?");
     const qty = prompt("New quantity?");
     const price = prompt("New price?");
-    const payload = { name, category, quantity: Number(qty), price: Number(price) };
+
+    const quantity = Number(qty);
+    const priceNum = Number(price);
+
+    const error = validateProduct(name, category, quantity, priceNum);
+    if (error) {
+      alert(error);
+      return;
+    }
+
+    const payload = { name, category, quantity, price: priceNum };
+
     const res = await fetch(API + "/update/" + id, {
       method: "PUT",
       headers: {"Content-Type":"application/json"},
@@ -87,6 +98,12 @@ document.getElementById("products").addEventListener("click", async (e) => {
     });
     if(res.ok){ fetchProducts(); alert("Updated"); }
     else alert("Update failed");
+
+  } else if(action === "delete"){
+    if(!confirm("Delete product?")) return;
+    const res = await fetch(API + "/delete/" + id, { method: "DELETE" });
+    if(res.ok){ fetchProducts(); alert("Deleted"); }
+    else alert("Delete failed");
   }
 });
 
