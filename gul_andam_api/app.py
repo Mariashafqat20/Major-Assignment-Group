@@ -1,4 +1,3 @@
-# gul_andam_api/app.py
 """
 Flask app factory for Gul Andam API (Day 2/3/4)
 Run: python -m gul_andam_api.app
@@ -11,7 +10,7 @@ from .report_routes import report_api
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)  # allow browser access during local dev
+    CORS(app)  # allow browser access during local development
     register_routes(app)
     app.register_blueprint(report_api, url_prefix="/report")
     return app
